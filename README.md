@@ -164,3 +164,5 @@ RestTemplate restTemplate = new RestTemplate(new HttpsClientRequestFactory());
 ```
 
 当需要自定义加锁方式时，可以继承 AbtrastILock ，当实现新的加锁类时，需要在 LockBeanNameConstants 增加标注
+
+#### 其他工具类
