@@ -1,0 +1,12 @@
+cors:
+  allowed-origins:
+    - '*'
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: Authorization,Content-Type
+  allow-credentials: true
+  max-age: 3600
+wenhe9:
+  thread:
+    core-size: 5
+    max-size: 9
+    keep-alive-time: 10

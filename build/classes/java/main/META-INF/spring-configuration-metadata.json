@@ -1,0 +1,44 @@
+{
+  "groups": [
+    {
+      "name": "cors",
+      "type": "cn.wenhe9.template.config.cors.CorsProperties",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "cors.allow-credentials",
+      "type": "java.lang.Boolean",
+      "description": "是否允许携带身份凭证 如 cookies http认证信息",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "cors.allowed-headers",
+      "type": "java.lang.String",
+      "description": "允许的请求头",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-methods",
+      "type": "java.lang.String",
+      "description": "允许的方法类型",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-origins",
+      "type": "java.util.List<java.lang.String>",
+      "description": "允许的协议+地址+端口",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties"
+    },
+    {
+      "name": "cors.max-age",
+      "type": "java.lang.Long",
+      "description": "预检请求缓存时间",
+      "sourceType": "cn.wenhe9.template.config.cors.CorsProperties",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}

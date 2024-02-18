@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+spring:
+  profiles:
+    active: test
+  jackson:
+    date-format: YYYY-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      fail-on-empty-beans: false
+    generator:
+      write-numbers-as-strings: true
+  main:
+    allow-bean-definition-overriding: true
