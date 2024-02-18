@@ -1,36 +1,165 @@
-# springboot使用gradle构建项目模板
+# Template for building Spring Boot projects with Gradle
 
-#### Description
-使用kotlin作为dsl的gradle构建springboot项目模板，内置常用依赖、项目包结构、统一异常处理、统一结果返回、spring、日期、去重、合法性校验工具类以及跨域、https、多线程和单机锁与分布式锁的配置
+### Introduction
 
-#### Software Architecture
-Software architecture description
-
-#### Installation
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+Using Kotlin as the DSL for Gradle, this template facilitates building Spring Boot projects. It comes with built-in dependencies, project package structure, unified exception handling, unified result return, Spring, date, deduplication, legality verification utility classes, as well as configurations for cross-origin resource sharing (CORS), HTTPS, multithreading, and single-node locks with distributed locks.
 
 
-#### Gitee Feature
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+### Instructions for Use
+
+#### Building Projects and Managing Dependencies with Kotlin DSL for Gradle
+
+```kotlin
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    java
+    id("org.springframework.boot") version "2.6.4"
+    id("io.spring.dependency-management") version "1.1.4"
+}
+
+group = "cn.wenhe9"
+version = "0.0.1-SNAPSHOT"
+description = "springboot使用gradle构建项目模板"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
+buildscript {
+    extra["springCloudVersion"] = "2021.0.1"
+    extra["springCloudAlibabaVersion"] = "2021.0.1.0"
+    extra["hutoolVersion"] = "5.5.1"
+    extra["validationApi"] = "2.0.1.Final"
+    extra["commonsPools2"] = "2.11.1"
+}
+
+repositories {
+    maven(url = "https://maven.aliyun.com/repository/public")
+    maven(url = "https://mvnrepository.com")
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+        mavenBom("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${property("springCloudAlibabaVersion")}")
+    }
+    dependencies {
+        dependency("org.apache.commons:commons-pool2:${property("commonsPools2")}")
+        dependency("javax.validation:validation-api:${property("validationApi")}")
+        dependency("cn.hutool:hutool-all:${property("hutoolVersion")}")
+    }
+}
+
+dependencies {
+    implementation(platform(SpringBootPlugin.BOM_COORDINATES))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.aspectj:aspectjrt")
+    implementation("org.apache.commons:commons-pool2")
+    implementation("javax.validation:validation-api")
+    implementation("cn.hutool:hutool-all")
+    compileOnly("org.projectlombok:lombok")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    annotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+```
+
+
+
+#### Separating CORS Configuration into Configuration Files
+
+Multiple domains can be configured as needed, or the wildcard `*` can be used to allow all.
+
+```yaml
+cors:
+  allowed-origins:
+    - '*'
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: Authorization,Content-Type
+  allow-credentials: true
+  max-age: 3600
+```
+
+
+
+#### Multithreading Configuration in Configuration Files
+
+```yaml
+wenhe9:
+  thread:
+    core-size: 5
+    max-size: 9
+    keep-alive-time: 10
+```
+
+
+
+#### HTTPS Configuration
+
+Used for sending `https` requests with `RestTemplate`. When using, it needs to be instantiated with `new` and cannot be injected automatically.
+
+```java
+RestTemplate restTemplate = new RestTemplate(new HttpsClientRequestFactory());
+```
+
+
+
+#### Unified Exception Handling
+
+```cmd
+    BusinessException.java // Business exception
+    GlobalExceptionHandler.java // Global exception handler
+    ServerException.java // System exception
+    ServiceException.java // Base class for custom exceptions
+    ValidationException.java // Validation exception
+```
+
+Where `ServiceException` is the base class for custom exceptions and can be extended when extending new exceptions.
+
+#### Unified Result Return
+
+```cmd
+    ResultResponse.java // Unified return result
+    ResultResponseEnum.java // Unified return status enumeration
+```
+
+
+
+#### Single-node and Distributed Locks
+
+```cmd
+└─lock
+    │  AbtrastILock.java // Abstract custom lock class
+    │  ILock.java // Custom lock specification
+    │  LockBeanNameConstants.java // Locked instance bean names
+    │
+    ├─annotation
+    │      Lockable.java // Locking annotation
+    │      LockMethodAspect.java // Aspect class for locking methods
+    │
+    └─impl
+            ConcurrentHashMapLock.java // Single-node lock using ConcurrentHashMap + ThreadLocal implementation
+            RedisLock.java // Distributed lock using Redis + ThreadLocal implementation
+```
+
+When customizing locking methods, you can inherit `AbtrastILock`. When implementing new locking classes, you need to add annotations in `LockBeanNameConstants`.
+
+#### Other Utility Classes
